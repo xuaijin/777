@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>火药全球传播与影响可视化</title>
+    <link rel="stylesheet" href="传播.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+    
+</head>
+
+<body>
+    <div class="shell">
+        <li><img src="火药.png" alt="" width="80px" ></li>
+        <ul class="nav">
+            <li>
+                <a href="火药_信息.html">
+                    <div class="icon">
+                        <img src="信息.png" alt="" width="50px">
+        
+                    </div>
+                    <div class="text">文明原力</div>
+                </a>
+            </li>
+            <li class="active" >
+                <a href="火药_传播.html">
+                    <div class="icon">
+                        <img src="网络传播.png" alt="" width="50px">
+                           
+                    </div>
+                    <div class="text">星火西行</div>
+                </a>
+            </li>
+            <li>
+                <a href="火药_演变.html">
+                    <div class="icon">
+                        <img src="时态演变.png" alt="" width="50px">
+                          
+                    </div>
+                    <div class="text">千年刻度</div>
+                </a>
+            </li>
+            <li>
+                <a href="火药_故事.html">
+                    <div class="icon">
+                        <img src="故事-面.png" alt="" width="50px">
+                           
+                    </div>
+                    <div class="text">青简拾遗</div>
+                </a>
+            </li>
+            <li>
+                <a href="zhuyemian.html">
+                    <div class="icon">
+                        <img src="退出.png" alt="" width="50px">
+                           
+                    </div>
+                    <div class="text">沧海归航</div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="content">
+
+        <h1 class="content-title">火药的传播及影响</h1>
+
+        <!-- 传播信息轮播 -->
+        <div id="main-content">
+            <div class="main-content-track" id="mainContentTrack"></div>
+            <script>
+
+                const mainContentData = [
+                    {"时间轴":"808年","路线名称":"炼丹术起源","起点":"中国衡阳","终点":"中国长安"},
+                    {"时间轴":"1221年","路线名称":"蒙古西征传播","起点":"中国中都","终点":"伊朗尼沙普尔"},
+                    {"时间轴":"1241年","路线名称":"莱格尼察战役","起点":"波兰","终点":"蒙古"},
+                    {"时间轴":"1280年","路线名称":"阿拉伯翻译运动","起点":"巴格达","终点":"大马士革"},
+                    {"时间轴":"1326年","路线名称":"欧洲最早火炮","起点":"佛罗伦萨","终点":"英格兰"},
+                    {"时间轴":"1453年","路线名称":"君士坦丁堡战役","起点":"奥斯曼","终点":"拜占庭"},
+                    {"时间轴":"1521年","路线名称":"殖民美洲传播","起点":"西班牙","终点":"墨西哥"},
+                    {"时间轴":"1543年","路线名称":"铁炮传来事件","起点":"葡萄牙","终点":"日本"},
+                    {"时间轴":"1605年","路线名称":"火药阴谋事件","起点":"英格兰","终点":"伦敦"},
+                    {"时间轴":"1775年","路线名称":"美国独立战争","起点":"英国","终点":"美国"},
+                    {"时间轴":"1864年","路线名称":"诺贝尔发明炸药","起点":"瑞典","终点":"全球"}
+                ];
+
+                
+                let currentIndex = 0;
+                let isAnimating = false;
+                let autoScrollInterval;
+                
+                function createMainContentItem(item) {
+                    const div = document.createElement('div');
+                    div.className = 'main-content-item';
+                    div.innerHTML = `
+                        <div class="main-content-time">${item.时间轴}</div>
+                        <div class="main-content-route">${item.路线名称}</div>
+                        <div class="main-content-path">${item.起点} → ${item.终点}</div>
+                    `;
+                    return div;
+                }
+                
+                function scrollNext() {
+                    if (isAnimating) return;
+                    isAnimating = true;
+                
+                    const track = document.getElementById('mainContentTrack');
+                    const items = track.children;
+                    
+                    // 添加新元素到末尾
+                    const newIndex = (currentIndex + 5) % mainContentData.length;
+                    const newItem = createMainContentItem(mainContentData[newIndex]);
+                    track.appendChild(newItem);
+                
+                    // 触发滚动动画
+                    track.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    track.style.transform = 'translateY(-20%)';
+                
+                    setTimeout(() => {
+                        // 移除第一个元素
+                        track.removeChild(items[0]);
+                        // 重置位置
+                        track.style.transition = 'none';
+                        track.style.transform = 'translateY(0)';
+                        void track.offsetWidth; // 强制重排
+                        
+                        currentIndex = (currentIndex + 1) % mainContentData.length;
+                        isAnimating = false;
+                    }, 600);
+                }
+                function init() {
+                    const track = document.getElementById('mainContentTrack');
+                    
+                    // 初始填充前5条
+                    for (let i = 0; i < 5; i++) {
+                        track.appendChild(createMainContentItem(mainContentData[i]));
+                    }
+                
+                    // 自动滚动
+                    autoScrollInterval = setInterval(scrollNext, 3000);
+                
+                    // 鼠标滚轮控制
+                    window.addEventListener('wheel', (e) => {
+                        clearInterval(autoScrollInterval);
+                        if (e.deltaY > 0) {
+                            scrollNext();
+                        } else {
+                            // 反向滚动逻辑（需额外实现）
+                        }
+                        autoScrollInterval = setInterval(scrollNext, 3000);
+                    }, { passive: true });
+                }
+                
+                window.onload = init;
+            </script>
+        </div>
+
+        <!-- 传播线路地图 -->
+        <div id="map-container">
+            <div class="info-panel" id="infoPanel">
+                <span class="close-btn" onclick="closePanel()">×</span>
+                <h3 id="regionTitle" style="color: #2c3e50; margin-bottom: 15px;"></h3>
+                <div id="regionContent" style="color: #666; line-height: 1.6;"></div>
+            </div>
+
+            <script>
+                const chart = echarts.init(document.getElementById('map-container'));
+                const infoPanel = document.getElementById('infoPanel');
+
+                // 火药传播路径配置
+                const spreadRoutes =  [
+                        {
+                            from: 'China',
+                            to: 'Mongolia',
+                            time: '13世纪',
+                            label: '蒙古西征路线',
+                            color: '#8b0000',
+                            points: [[116.4074,39.9042], [106.9172,47.8864]] // 北京→乌兰巴托
+                        },
+                        {
+                            from: 'Mongolia',
+                            to: 'Iran',
+                            time: '1258年',
+                            label: '旭烈兀西征',
+                            color: '#6b0000',
+                            points: [[106.9172,47.8864], [51.3890,35.6892]] // 乌兰巴托→巴格达
+                        },
+                        {
+                            from: 'Iran',
+                            to: 'Turkey',
+                            time: '14世纪',
+                            label: '奥斯曼扩张路线',
+                            color: '#4b0000',
+                            points: [[51.3890,35.6892], [28.9784,41.0082]] // 巴格达→伊斯坦布尔
+                        },
+                        {
+                            from: 'China',
+                            to: 'Korea',
+                            time: '1232年',
+                            label: '高丽抗蒙战争',
+                            color: '#8b5a2b',
+                            points: [[121.4737,31.2304], [126.9780,37.5665]] // 南京→首尔
+                        },
+                        {
+                            from: 'Turkey',
+                            to: 'Hungary',
+                            time: '1526年',
+                            label: '莫哈奇战役',
+                            color: '#5d4037',
+                            points: [[28.9784,41.0082], [19.0402,47.4979]] // 伊斯坦布尔→布达佩斯
+                        },
+                        {
+                            from: 'Portugal',
+                            to: 'Japan',
+                            time: '1543年',
+                            label: '火绳枪传入',
+                            color: '#6b4226',
+                            points: [[-9.1427,38.7369], [130.4017,33.5904]] // 里斯本→种子岛
+                        },
+                        {
+                            from: 'Spain',
+                            to: 'Mexico',
+                            time: '1519年',
+                            label: '科尔特斯远征',
+                            color: '#795548',
+                            points: [[-3.7038,40.4168], [-99.1332,19.4326]] // 马德里→墨西哥城
+                        },
+                        {
+                            from: 'Iran',
+                            to: 'India',
+                            time: '1398年',
+                            label: '帖木儿帝国南征',
+                            color: '#5d4037',
+                            points: [[51.3890,35.6892], [77.2090,28.6139]] // 伊斯法罕→德里
+                        },
+                        {
+                            from: 'Malaysia',
+                            to: 'Indonesia',
+                            time: '15世纪',
+                            label: '马来群岛传播',
+                            color: '#6d4c41',
+                            points: [[101.6869,3.1390], [106.8272,-6.1754]] // 马六甲→爪哇
+                        },
+                        {
+                            from: 'Hungary',
+                            to: 'Germany',
+                            time: '15世纪后期',
+                            label: '中欧火器扩散',
+                            color: '#4e342e',
+                            points: [[19.0402,47.4979], [13.4049,52.5200]] // 布达佩斯→柏林
+                        },
+                        {
+                            from: 'Indonesia',
+                            to: 'Philippines',
+                            time: '16世纪中期',
+                            label: '南洋群岛传播',
+                            color: '#5d4037',
+                            points: [[106.8272,-6.1754], [123.8854,10.3157]] // 爪哇→马尼拉
+                        },
+                        {
+                            from: 'Egypt',
+                            to: 'Sudan',
+                            time: '14世纪',
+                            label: '马穆鲁克南征',
+                            color: '#8b4513',
+                            points: [[31.2357,30.0444], [32.5599,15.5007]] // 开罗→喀土穆
+                        },
+                        {
+                            from: 'Russia',
+                            to: 'Sweden',
+                            time: '1558年',
+                            label: '利沃尼亚战争',
+                            color: '#6b8e23',
+                            points: [[37.6173,55.7558], [18.0686,59.3293]] // 莫斯科→斯德哥尔摩
+                        },
+                        {
+                            from: 'China',
+                            to: 'Vietnam',
+                            time: '1407年',
+                            label: '明越战争技术泄露',
+                            color: '#a0522d',
+                            points: [[116.4074,39.9042], [105.8342,21.0278]] // 北京→河内
+                        },
+                        {
+                            from: 'India',
+                            to: 'Sri Lanka',
+                            time: '13世纪后期',
+                            label: '朱罗王朝海上扩张',
+                            color: '#cd853f',
+                            points: [[77.2090,28.6139], [79.8612,6.9271]] // 德里→科伦坡
+                        },
+                        {
+                            from: 'Turkey',
+                            to: 'Serbia',
+                            time: '1389年',
+                            label: '科索沃战役技术扩散',
+                            color: '#6b0000',
+                            points: [[28.9784,41.0082], [20.4489,44.7866]] // 伊斯坦布尔→贝尔格莱德
+                        },
+                        // 新增朝鲜→女真路线
+                        {
+                            from: 'Korea',
+                            to: 'Jurchen',
+                            time: '1592年后',
+                            label: '壬辰倭乱技术泄露',
+                            color: '#8b5a2b',
+                            points: [[126.9780,37.5665], [123.4343,41.8119]] // 首尔→沈阳
+                        },
+                        // 新增也门→东非路线
+                        {
+                            from: 'Yemen',
+                            to: 'Somalia',
+                            time: '14世纪',
+                            label: '红海火器贸易',
+                            color: '#5d4037',
+                            points: [[44.2075,15.3694], [45.3182,2.0469]] // 萨那→摩加迪沙
+                        }
+                    ];
+
+
+                const regionData = {
+                    'China': {
+                        title: '火药发源地 - 中国',
+                        content: '唐代（9世纪）《太上圣祖金丹秘诀》记载火药配方，宋代（1044年）《武经总要》正式记录军用火药配方，南宋（1132年）陈规发明竹制火枪，元代（1280年）出现铜制火铳。'
+                    },
+                    'Mongolia': {
+                        title: '蒙古帝国',
+                        content: '1211-1234年通过金朝俘虏获得火药技术，1258年西征使用"震天雷"攻陷巴格达，建立横跨欧亚的火药传播网络'
+                    },
+                    'Iran': {
+                        title: '波斯火药工坊',
+                        content: '1260年后伊利汗国建立火药制造体系，14世纪改进出可携带式"马达法"火炮，成为奥斯曼火器技术源头'
+                    },
+                    'Turkey': {
+                        title: '奥斯曼帝国',
+                        content: '1453年乌尔班巨炮轰塌君士坦丁堡城墙（炮重17吨，口径762mm），1526年莫哈奇战役火器部队歼灭匈牙利军队'
+                    },
+                    'Hungary': {
+                        title: '欧洲火器先驱',
+                        content: '15世纪率先建立专业炮兵部队，1526年后通过俘虏奥斯曼工匠改进铸造技术'
+                    },
+                    'Korea': {
+                        title: '高丽火器发展',
+                        content: '1232年龟州之战使用"震天雷"击退蒙古军队，1377年发明世界最早金属轮转式射击火器"神机箭"'
+                    },
+                    'Japan': {
+                        title: '战国火器革命',
+                        content: '1543年葡萄牙商船传入火绳枪，1575年长篠之战织田信长部署3000挺铁炮大破武田骑兵'
+                    },
+                    'Portugal': {
+                        title: '大西洋火器传播',
+                        content: '1498年达伽马舰队配备佛郎机炮，1511年征服马六甲后建立东南亚火器贸易网络'
+                    },
+                    'Mexico': {
+                        title: '新大陆应用',
+                        content: '1519年科尔特斯使用12门青铜火炮征服阿兹特克，1541年建立美洲第一个火药工坊'
+                    },
+                    'India': {
+                        title: '莫卧儿王朝',
+                        content: '1398年帖木儿帝国引入波斯火器技术，1526年巴布尔结合奥斯曼火炮战术建立帝国'
+                    },
+                    'Malaysia': {
+                        title: '马六甲海峡枢纽',
+                        content: '1409年郑和船队建立补给点，1511年葡萄牙占领后成为火器向东南亚传播的中转站'
+                    },
+                    'Indonesia': {
+                        title: '东南亚火器应用',
+                        content: '15世纪满者伯夷王朝通过中国商船获得火药，16世纪用于对抗葡萄牙殖民者'
+                    },
+                    'Germany': {
+                        title: '神圣罗马帝国',
+                        content: '15世纪后期从匈牙利引进火炮技术，纽伦堡成为欧洲最早的火器制造中心（1388年文献记载）'
+                    },
+                    'Philippines': {
+                        title: '西班牙殖民地',
+                        content: '1565年雷加斯皮远征携带欧洲火器，1571年建立马尼拉火药工坊供应太平洋贸易'
+                    },
+                    'Sudan': {
+                        title: '非洲火药应用',
+                        content: '14世纪马穆鲁克王朝通过尼罗河贸易将火药传入努比亚地区，现存1388年麦罗埃遗址出土的早期火器残片'
+                    },
+                    'Russia': {
+                        title: '东欧火药技术',
+                        content: '1380年库利科沃战役使用蒙古遗留火器，1552年伊凡雷帝用火炮攻陷喀山汗国，1586年图拉成为军火制造中心'
+                    },
+                    'Vietnam': {
+                        title: '东南亚火器发展',
+                        content: '1407年明军入侵遗留火炮技术，1471年后黎朝仿制"神机炮"，1527年莫朝与葡萄牙合作改进火绳枪'
+                    },
+                    'Sri Lanka': {
+                        title: '锡兰火药贸易',
+                        content: '13世纪朱罗王朝控制海上贸易，科伦坡成为印度洋火药中转站，16世纪葡萄牙在此建立军火仓库'
+                    },
+                    'Serbia': {
+                        title: '巴尔干火药应用',
+                        content: '1389年科索沃战役后通过缴获奥斯曼火器获得技术，15世纪成为抵抗奥斯曼的重要火器生产地'
+                    },
+                    'Jurchen': {
+                        title: '女真部落技术吸收',
+                        content: '1592年壬辰倭乱期间通过朝鲜叛逃工匠获得火器制造技术，为后金（清）崛起奠定军事基础'
+                    },
+                    'Yemen': {
+                        title: '阿拉伯火器枢纽',
+                        content: '14世纪通过红海贸易将波斯火器技术传往东非，亚丁港发现大量14世纪中期火器零件遗存'
+                    },
+                    'Somalia': {
+                        title: '东非沿海据点',
+                        content: '考古发现摩加迪沙14世纪后期火药工坊遗址，证实通过阿拉伯商人获得早期火器技术'
+                    },
+                };
+
+                const chinaNameMap =  {
+                    '中国': 'China',
+                    '伊朗': 'Iran',
+                    '土耳其': 'Turkey',
+                    '匈牙利': 'Hungary',
+                    '日本': 'Japan',
+                    '韩国': 'Korea',
+                    '葡萄牙': 'Portugal',
+                    '西班牙': 'Spain',
+                    '墨西哥': 'Mexico',
+                    '蒙古': 'Mongolia',  // 修正
+                    '印度': 'India',
+                    '马来西亚': 'Malaysia',
+                    '印度尼西亚': 'Indonesia',
+                    '德国': 'Germany',
+                    '菲律宾': 'Philippines',
+                    '埃及': 'Egypt',
+                    '苏丹': 'Sudan',
+                    '俄罗斯': 'Russia',
+                    '瑞典': 'Sweden',
+                    '越南': 'Vietnam',
+                    '斯里兰卡': 'Sri Lanka',
+                    '塞尔维亚': 'Serbia',
+                    '女真': 'Jurchen',
+                    '也门': 'Yemen',
+                    '索马里': 'Somalia'
+                };
+
+                // 地图初始化
+                fetch('world.json')
+                    .then(res => res.json())
+                    .then(worldData => {
+                        const convertedData = {
+                            ...worldData,
+                            features: worldData.features.map(feature => ({
+                                ...feature,
+                                properties: {
+                                    ...feature.properties,
+                                    name: chinaNameMap[feature.properties.name] || feature.properties.name
+                                }
+                            }))
+                        };
+
+                        echarts.registerMap('PaperWorld', convertedData);
+
+                        const option = {
+                            title: {
+                                text: '火药全球传播路线',
+
+                                left: 'center',
+                                textStyle: {
+                                    fontSize: 14,
+                                    color: '#382e22',
+                                    fontFamily: 'MedievalSharp'
+                                }
+                            },
+                            geo: {
+                                map: 'PaperWorld',
+                                roam: true,
+                                itemStyle: {
+                                    areaColor: '#f5edd6',
+                                    borderColor: 'rgba(56,46,34,0.7)',
+                                    borderWidth: 0.8
+                                },
+                                emphasis: {
+                                    itemStyle: {
+                                        areaColor: '#e0d4b8',
+                                        borderWidth: 1.2
+                                    },
+                                    label: {
+                                        show: true,
+                                        color: '#382e22',
+                                        formatter: ({ name }) =>  ({
+                                            'China': '华夏',
+                                            'Iran': '波斯',
+                                            'Turkey': '奥斯曼',
+                                            'Hungary': '匈牙利王国',
+                                            'Japan': '东瀛',
+                                            'Korea': '高丽',
+                                            'Portugal': '佛郎机',
+                                            'Mexico': '新西班牙',
+                                            'Mongolia': '蒙古帝国（现代蒙古）',  // 映射为现代蒙古
+                                            'India': '天竺',
+                                            'Malaysia': '满剌加',
+                                            'Indonesia': '爪哇（印尼）',
+                                            'Germany': '神圣罗马帝国（德国）',  // 补充说明
+                                            'Philippines': '吕宋',
+                                            'Spain':'西班牙帝国（西班牙）',
+                                            'Egypt': '密昔儿',
+                                            'Sudan': '努比亚',
+                                            'Russia': '莫斯科大公国',
+                                            'Sweden': '瑞典王国',
+                                            'Vietnam': '安南',
+                                            'Sri Lanka': '锡兰',
+                                            'Serbia': '塞尔维亚',
+                                            'Jurchen': '女真',
+                                            'Yemen': '也门',
+                                            'Somalia':'索马里' 
+                                        })[name] || name
+
+
+
+                                    }
+                                }
+                            },
+                            series: [{
+                                type: 'lines',
+                                coordinateSystem: 'geo',
+                                zLevel: 1,
+                                effect: {
+                                    show: true,
+                                    period: 5,
+                                    trailLength: 0.8,
+                                    symbol: 'arrow',
+                                    symbolSize: [12, 20],
+                                    loop: true
+                                },
+                                lineStyle: {
+                                    curveness: 0.3,
+                                    width: 1.8,
+                                    opacity: 0.6
+                                },
+                                data: spreadRoutes.map(route => ({
+                                    coords: route.points,
+                                    lineStyle: { color: route.color },
+                                    effect: { color: route.color }
+                                }))
+                            }]
+                        };
+
+                        chart.setOption(option);
+
+                        // 点击事件处理
+                        chart.on('click', 'geo', params => {
+                            const regionName = params.name;
+                            const info = regionData[regionName] || {
+                                title: `火药技术传播 - ${regionName}`,
+                                content: '该地区火药技术传入记录不详，可能通过次级贸易路线获得。'
+                            };
+                            
+                            document.getElementById('regionTitle').textContent = info.title;
+                            document.getElementById('regionContent').innerHTML = `
+                                <p>${info.content}</p>
+                                ${regionData[regionName] ? `
+                                <div style="margin-top:15px; color:#7f8c8d; border-top:1px solid #eee; padding-top:10px;">
+                                    <strong>关联传播路线：</strong>
+                                    <ul style="padding-left:20px; margin-top:8px;">
+                                        ${spreadRoutes
+                                            .filter(route => route.from === regionName || route.to === regionName)
+                                            .map(route => `
+                                                <li style="color:${route.color}; margin:8px 0;">
+                                                    <span style="background:${route.color}; width:8px; height:8px; display:inline-block; border-radius:50%; margin-right:8px;"></span>
+                                                    ${route.label}（${route.time}）
+                                                </li>
+                                            `).join('')}
+                                    </ul>
+                                </div>` : ''}
+                            `;
+                            infoPanel.style.display = 'block';
+                        });
+
+                        // 双击重置视角
+                        chart.on('dblclick', () => {
+                            chart.dispatchAction({ type: 'geoRoam', zoom: 1, center: [0, 0] });
+                        });
+                    });
+
+                window.closePanel = () => infoPanel.style.display = 'none';
+                window.addEventListener('resize', () => chart.resize());
+            </script>
+        </div>
+
+        <!-- 传播地区之间的关系 -->
+        <div id="box3">
+            <script>
+                const myChart = echarts.init(document.getElementById('box3'));
+    
+                // 节点数据（补充巴格达节点完善传播链）
+                const nodes = [
+                    { id:0, name:'中国', category:'起源', symbolSize:35 },
+                    { id:1, name:'《太上圣祖金丹秘诀》', category:'文物', symbolSize:25 },
+                    { id:2, name:'汴京保卫战（1126）', category:'事件', symbolSize:30 },
+                    { id:3, name:'蒙古帝国', category:'地区', symbolSize:25 },
+                    { id:4, name:'阿拉伯帝国', category:'地区', symbolSize:25 },
+                    { id:5, name:'奥斯曼帝国', category:'地区', symbolSize:25 },
+                    { id:6, name:'文艺复兴城邦', category:'地区', symbolSize:25 }
+                ];
+
+                const links = [
+                    { source:0, target:1, label:'理论奠基' },
+                    { source:0, target:2, label:'首次实战' },
+                    { source:0, target:3, label:'蒙古西征' },
+                    { source:3, target:4, label:'西亚传播' },
+                    { source:4, target:5, label:'奥斯曼改良' },
+                    { source:5, target:6, label:'欧洲技术转移' }
+                ];
+                                
+                // 分类颜色配置（中文标签）
+                const categories = [
+                    { name: '起源', itemStyle: { color: '#FF6B6B' } },
+                    { name: '地区', itemStyle: { color: '#4ECDC4' } },
+                    { name: '事件', itemStyle: { color: '#45B7D1' } },
+                    { name: '文物', itemStyle: { color: '#D4A5A5' } }
+                ];
+    
+                const tooltipDiv = document.createElement('div');
+                tooltipDiv.style = `
+                    position: absolute;
+                    padding: 10px;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                    display: none;
+                    z-index: 1000;
+                `;
+                document.body.appendChild(tooltipDiv);
+    
+                // 新增：点击事件处理
+                myChart.on('click', params => {
+                    if (params.dataType === 'node') {
+                        const currentNode = params.data;
+                        const upstreamNodes = links
+                            .filter(link => link.target === currentNode.id)
+                            .map(link => nodes.find(n => n.id === link.source).name);
+    
+                        if (upstreamNodes.length > 0) {
+                            // 显示自定义提示框
+                            tooltipDiv.innerHTML = `
+                                <strong>${currentNode.name}</strong>的上级节点：<br>
+                                ${upstreamNodes.join('<br>')}
+                            `;
+                            tooltipDiv.style.display = 'block';
+                            tooltipDiv.style.left = params.event.event.clientX + 10 + 'px';
+                            tooltipDiv.style.top = params.event.event.clientY + 10 + 'px';
+                        } else {
+                            tooltipDiv.innerHTML = `${currentNode.name}是起源节点，没有上级节点`;
+                            tooltipDiv.style.display = 'block';
+                            tooltipDiv.style.left = params.event.event.clientX + 10 + 'px';
+                            tooltipDiv.style.top = params.event.event.clientY + 10 + 'px';
+                        }
+                    } else {
+                        tooltipDiv.style.display = 'none';
+                    }
+                });
+    
+                // 新增：点击页面其他区域关闭提示
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#box3')) {
+                        tooltipDiv.style.display = 'none';
+                    }
+                });
+    
+    
+                const option = {
+                    title: { 
+                        text: '火药传播关系图谱（公元前2世纪-1910年）',
+                        left: 'center'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: categories.map(c => c.name),
+                        orient: 'vertical',
+                        right: 10,
+                        textStyle: { fontSize: 14 }
+                    },
+                    series: [{
+                        type: 'graph',
+                        layout: 'force',
+                        force: {
+                            repulsion: 100,
+                            gravity: 0.08,
+                            edgeLength: [100, 200] 
+                        },
+                        draggable: true,
+                        data: nodes.map(node => ({
+                            ...node,
+                            itemStyle: categories.find(c => c.name === node.category).itemStyle
+                        })),
+                        links: links,
+                        categories: categories,
+                        edgeLabel: {
+                            show: true,
+                            formatter: '{@label}',
+                            fontSize: 12
+                        },
+                        label: {
+                            show: true,
+                            position: 'right',
+                            fontSize: 12
+                        },
+                        lineStyle: {
+                            color: 'source',
+                            curveness: 0.2
+                        },
+                        emphasis: { // 新增高亮效果
+                            focus: 'adjacency',
+                            lineStyle: { width: 3 }
+                        }
+                    }]
+                };
+    
+                myChart.setOption(option);
+                window.onresize = () => myChart.resize();
+            </script>
+        </div>
+
+        <!-- 对各个地区的影响 -->
+        <div id="box4">
+            <div class="carousel-container">
+                <div class="carousel-track" id="impactCarousel"></div>
+                <div class="carousel-controls">
+                    <span class="carousel-prev">◀</span>
+                    <div class="carousel-dots"></div>
+                    <span class="carousel-next">▶</span>
+                </div>
+            </div>
+            <script>
+                const box4Data = [
+                    {
+                        name: '中国',
+                        value: [10,9,7,6,8],
+                        years: '808-1910',
+                        facts: ['1044年《武经总要》三配方','1132年陈规发明火枪','1598年赵士祯《神器谱》'],
+                        sources: ['武经总要校注','宋史·兵志']
+                    },
+                    {
+                        name: '阿拉伯',
+                        value: [0,8,9,7,6],
+                        years: '1221-1500',
+                        facts: ['1280年马丹沙火箭工坊','1405年帖木儿使用火药攻城','阿拉伯手抄本火药配方'],
+                        sources: ['伊本·赫勒敦历史绪论','大马士革档案馆']
+                    },
+                    {
+                        name: '欧洲',
+                        value: [0,7,10,9,8],
+                        years: '1326-1910',
+                        facts: ['1449年法国火药局成立','1627年班特克雷比奥矿山火药爆破','1867年诺贝尔炸药专利'],
+                        sources: ['佛罗伦萨市政档案','诺贝尔奖年鉴']
+                    },
+                    {
+                        name: '日本',
+                        value: [0,6,8,7,5],
+                        years: '1543-1868',
+                        facts: ['1567年种子岛铳改良','1614年大阪之役国崩炮','1853年黑船事件刺激火药改革'],
+                        sources: ['铁炮记','德川实纪']
+                    },
+                    {
+                        name: '美洲',
+                        value: [0,5,7,6,4],
+                        years: '1492-1900',
+                        facts: ['1775年康科德战役火药库争夺','1846年硝石战争','1864年中央太平洋铁路爆破'],
+                        sources: ['联邦党人文集','美洲矿业史']
+                    }
+                ];                // 样式配置
+                
+                const styleConfig = {
+                    radarColor: '#704214',
+                    areaColor: 'rgba(180,163,144,0.2)',
+                    tooltipBg: '#f5edd6',
+                    fontFamily: 'MedievalSharp'
+                };
+                
+                // 创建单个雷达图
+                function createImpactChart(data) {
+                    const chartDom = document.createElement('div');
+                    chartDom.className = 'carousel-item';
+                    chartDom.style.width = '100%';      // 新增
+                    chartDom.style.height = '100%';     // 新增
+                    const chart = echarts.init(chartDom);
+                    chart.setOption({
+                        title: {
+                            text: `${data.name}技术影响维度${data.years}`,
+                            left: 'center',
+                            textStyle: {
+                                fontSize: 14,
+                                color: '#382e22',
+                                fontFamily: styleConfig.fontFamily
+                            }
+                        },
+                        radar: {
+                            shape: 'circle',
+                            indicator: [
+                                { name: '技术发明', max: 10 },
+                                { name: '军事应用', max: 10 },
+                                { name: '航海发展', max: 10 },
+                                { name: '贸易促进', max: 10 },
+                                { name: '文化影响', max: 10 }
+                            ],
+                            axisLine: { lineStyle: { color: styleConfig.radarColor } },
+                            splitArea: { areaStyle: { color: ['rgba(168, 132, 24, 0.9)','rgba(224,212,184,0.3)'] } }
+                        },
+                        series: [{
+                            type: 'radar',
+                            data: [{ value: data.value, name: data.name }],
+                            lineStyle: { color: styleConfig.radarColor },
+                            areaStyle: { color: styleConfig.areaColor },
+                            tooltip: {
+                                formatter: params => `
+                                    <strong style="color:${styleConfig.radarColor}">${data.name}</strong>
+                                    <div style="border-top:1px solid #eee;margin:5px 0;padding-top:5px">
+                                        ${data.facts.join('<br>')}
+                                    </div>
+                                    <em style="font-size:0.8em;color:#7f8c8d">
+                                        数据来源：${data.sources.join('、')}
+                                    </em>
+                                `
+                            }
+                        }]
+                    });
+                    const observer = new ResizeObserver(() => chart.resize());
+                    observer.observe(chartDom);
+                    return chartDom;
+                }
+            
+                // 轮播控制
+                let currentSlide = 0;
+                const carouselTrack = document.getElementById('impactCarousel');
+                const dotsContainer = document.querySelector('.carousel-dots');
+
+                // 初始化
+                box4Data.forEach((data, index) => {
+                    carouselTrack.appendChild(createImpactChart(data));
+                    const dot = document.createElement('span');
+                    dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
+                    dot.dataset.index = index;
+                    dotsContainer.appendChild(dot);
+                });
+
+                // 切换逻辑
+                function updateCarousel(newIndex) {
+                    const itemWidth = document.querySelector('.carousel-item').offsetWidth;
+                    const totalItems = box4Data.length;
+                    
+                    // 处理循环逻辑
+                    if (newIndex < 0) newIndex = totalItems - 1;
+                    if (newIndex >= totalItems) newIndex = 0;
+                    
+                    // 更新当前索引
+                    currentSlide = newIndex;
+                    
+                    // 更新圆点状态
+                    document.querySelectorAll('.carousel-dot').forEach(dot => {
+                        dot.classList.toggle('active', parseInt(dot.dataset.index) === currentSlide);
+                    });
+                    
+                    carouselTrack.style.transform = `translateX(-${currentSlide * itemWidth}px)`;
+                }
+
+                // 事件绑定
+                document.querySelector('.carousel-prev').addEventListener('click', () => updateCarousel(currentSlide - 1));
+                document.querySelector('.carousel-next').addEventListener('click', () => updateCarousel(currentSlide + 1));
+                document.querySelectorAll('.carousel-dot').forEach(dot => {
+                    dot.addEventListener('click', () => updateCarousel(parseInt(dot.dataset.index)));
+                });
+
+                // 自动轮播
+                let autoPlay = setInterval(() => updateCarousel(currentSlide + 1), 5000);
+                carouselTrack.parentElement.addEventListener('mouseenter', () => clearInterval(autoPlay));
+                carouselTrack.parentElement.addEventListener('mouseleave', () => autoPlay = setInterval(() => updateCarousel(currentSlide + 1), 5000));
+            </script>
+            <style>
+                .carousel-container {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                }
+
+                .carousel-track {
+                    display: flex;
+                    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    height: 100%;
+                }
+
+                .carousel-item {
+                    min-width: 100%;
+                    height: 100%;
+                    padding: 15px;
+                }
+
+                .carousel-controls {
+                    position: absolute;
+                    bottom: 10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                }
+
+                .carousel-prev, .carousel-next {
+                    cursor: pointer;
+                    color: #704214;
+                    font-size: 20px;
+                    text-shadow: 0 2px 4px rgba(56,46,34,0.2);
+                }
+
+                .carousel-dots {
+                    display: flex;
+                    gap: 8px;
+                }
+
+                .carousel-dot {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background: #b4a390;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                }
+
+                .carousel-dot.active {
+                    background: #704214;
+                    transform: scale(1.2);
+                }
+
+                /* 适配地图容器样式 */
+                #box4 {
+                    border: 1px solid #e8e1d5;
+                    box-shadow: 0 2px 8px rgba(56,46,34,0.1);
+                }
+            </style>
+        </div>
+    </div>
+
+
+
+    <script>
+        let nav = document.querySelectorAll(".nav li")
+        function activeLink() {
+            nav.forEach((item) => item.classList.remove("active"))
+            this.classList.add("active");
+        } 
+        nav.forEach((item) => item.addEventListener("click", activeLink))
+    </script>
+</body>
+</html>
