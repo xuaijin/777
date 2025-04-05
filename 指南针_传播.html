@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指南针全球传播与影响可视化</title>
+    <link rel="stylesheet" href="传播.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+    
+</head>
+
+<body>
+    <div class="shell">
+        <li><img src="指南针.png" alt="" width="80px" ></li>
+        <ul class="nav">
+            <li>
+                <a href="指南针_信息.html">
+                    <div class="icon">
+                        <img src="信息.png" alt="" width="50px">
+        
+                    </div>
+                    <div class="text">文明原力</div>
+                </a>
+            </li>
+            <li class="active" >
+                <a href="指南针_传播.html">
+                    <div class="icon">
+                        <img src="网络传播.png" alt="" width="50px">
+                           
+                    </div>
+                    <div class="text">星火西行</div>
+                </a>
+            </li>
+            <li>
+                <a href="指南针_演变.html">
+                    <div class="icon">
+                        <img src="时态演变.png" alt="" width="50px">
+                          
+                    </div>
+                    <div class="text">千年刻度</div>
+                </a>
+            </li>
+            <li>
+                <a href="指南针_故事.html">
+                    <div class="icon">
+                        <img src="故事-面.png" alt="" width="50px">
+                           
+                    </div>
+                    <div class="text">青简拾遗</div>
+                </a>
+            </li>
+            <li>
+                <a href="zhuyemian.html">
+                    <div class="icon">
+                        <img src="退出.png" alt="" width="50px">
+                           
+                    </div>
+                    <div class="text">沧海归航</div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="content">
+
+        <h1 class="content-title">指南针的传播及影响</h1>
+
+        <!-- 传播信息轮播 -->
+        <div id="main-content">
+            <div class="main-content-track" id="mainContentTrack"></div>
+            <script>
+            const mainContentData = [
+                {"时间轴":"1044年","路线名称":"陆上丝绸之路（东段）","起点":"中国","终点":"伊朗"},
+                {"时间轴":"1171年","路线名称":"宋日贸易航线","起点":"中国","终点":"日本"},
+                {"时间轴":"1277年","路线名称":"海上丝绸之路","起点":"中国","终点":"沙特阿拉伯"},
+                {"时间轴":"1290年","路线名称":"阿拉伯-欧洲路线","起点":"沙特阿拉伯","终点":"意大利"},
+                {"时间轴":"1405-1433年","路线名称":"郑和航线","起点":"中国","终点":"马来西亚"},
+                {"时间轴":"1488年","路线名称":"迪亚士好望角航线","起点":"葡萄牙","终点":"南非"},
+                {"时间轴":"1498年","路线名称":"达伽马航线","起点":"葡萄牙","终点":"印度"},
+                {"时间轴":"1519年","路线名称":"麦哲伦环球航线","起点":"西班牙","终点":"菲律宾"},
+                {"时间轴":"1602年","路线名称":"香料群岛航线","起点":"荷兰","终点":"印尼"},
+                {"时间轴":"1770年","路线名称":"库克船长太平洋航线","起点":"英国","终点":"澳大利亚"},
+                {"时间轴":"1905年","路线名称":"对马海峡海战应用","起点":"日本","终点":"俄罗斯"}
+            ];
+            
+            let currentIndex = 0;
+            let isAnimating = false;
+            let autoScrollInterval;
+            
+            function createMainContentItem(item) {
+                const div = document.createElement('div');
+                div.className = 'main-content-item';
+                div.innerHTML = `
+                    <div class="main-content-time">${item.时间轴}</div>
+                    <div class="main-content-route">${item.路线名称}</div>
+                    <div class="main-content-path">${item.起点} → ${item.终点}</div>
+                `;
+                return div;
+            }
+            
+            function scrollNext() {
+                if (isAnimating) return;
+                isAnimating = true;
+            
+                const track = document.getElementById('mainContentTrack');
+                const items = track.children;
+                
+                // 添加新元素到末尾
+                const newIndex = (currentIndex + 5) % mainContentData.length;
+                const newItem = createMainContentItem(mainContentData[newIndex]);
+                track.appendChild(newItem);
+            
+                // 触发滚动动画
+                track.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                track.style.transform = 'translateY(-20%)';
+            
+                setTimeout(() => {
+                    // 移除第一个元素
+                    track.removeChild(items[0]);
+                    // 重置位置
+                    track.style.transition = 'none';
+                    track.style.transform = 'translateY(0)';
+                    void track.offsetWidth; // 强制重排
+                    
+                    currentIndex = (currentIndex + 1) % mainContentData.length;
+                    isAnimating = false;
+                }, 600);
+            }
+            function init() {
+                const track = document.getElementById('mainContentTrack');
+                
+                // 初始填充前5条
+                for (let i = 0; i < 5; i++) {
+                    track.appendChild(createMainContentItem(mainContentData[i]));
+                }
+            
+                // 自动滚动
+                autoScrollInterval = setInterval(scrollNext, 3000);
+            
+                // 鼠标滚轮控制
+                window.addEventListener('wheel', (e) => {
+                    clearInterval(autoScrollInterval);
+                    if (e.deltaY > 0) {
+                        scrollNext();
+                    } else {
+                        // 反向滚动逻辑（需额外实现）
+                    }
+                    autoScrollInterval = setInterval(scrollNext, 3000);
+                }, { passive: true });
+            }
+            
+            window.onload = init;
+            </script>
+        </div>
+
+        <!-- 传播线路地图 -->
+        <div id="map-container">
+            <div class="info-panel" id="infoPanel">
+                <span class="close-btn" onclick="closePanel()">×</span>
+                <h3 id="regionTitle" style="color: #2c3e50; margin-bottom: 15px;"></h3>
+                <div id="regionContent" style="color: #666; line-height: 1.6;"></div>
+            </div>
+
+            <script>
+                const chart = echarts.init(document.getElementById('map-container'));
+                const infoPanel = document.getElementById('infoPanel');
+
+                // 指南针传播路径配置
+                const spreadRoutes = [
+                    {
+                        from: 'China',
+                        to: 'Iran',
+                        time: '11-13世纪',//李约瑟《中国科学技术史》指出磁罗盘西传最早见于1044年《武经总要》，陆路传播应在宋代
+                        label: '陆上丝绸之路（东段）',
+                        color: '#7d5d48',
+                        points: [[116.4074,39.9042], [51.3890,35.6892]] // 北京→德黑兰
+                    },
+                    {
+                        from: 'Iran',
+                        to: 'Turkey',
+                        time: '13世纪',
+                        label: '陆上丝绸之路（西段）',
+                        color: '#5d4037',
+                        points: [[51.3890,35.6892],[32.8597,39.9334]] // 德黑兰→伊斯坦布尔
+                    },
+                    {
+                        from: 'China',
+                        to: 'Saudi Arabia',
+                        time: '11-13世纪',
+                        label: '海上丝绸之路',
+                        color: '#b89b72',
+                        points: [[118.0894,24.4798], [39.8579,21.5433]] // 泉州→吉达
+                    },
+                    {
+                        from: 'Saudi Arabia',
+                        to: 'Italy',
+                        time: '12世纪',
+                        label: '阿拉伯-欧洲路线',
+                        color: '#382e22',
+                        points: [[39.8579,21.5433], [8.9463,44.4056]] // 吉达→热那亚
+                    },
+                    {
+                        from: 'China',
+                        to: 'Malaysia',
+                        time: '1405-1433年',
+                        label: '郑和航线',
+                        color: '#6b5c4d',
+                        points: [[121.4737,31.2304], [102.2502,2.1896]] // 南京→马六甲
+                    },
+                    {
+                        from: 'Portugal',   
+                        to: 'India',
+                        time: '1498年',
+                        label: '达伽马航线',
+                        color: '#8d6e63',
+                        points: [[-9.1427,38.7369], [75.7804,11.2588]] // 里斯本→卡利卡特
+                    },
+                    {
+                        from: 'Spain',
+                        to: 'Philippines',
+                        time: '1521年',
+                        label: '麦哲伦环球航线',
+                        color: '#795548',
+                        points: [[-5.9845,37.3891], [124.0145,10.3157]] // 塞维利亚→宿务
+                    },
+                    {
+                        from: 'China',
+                        to: 'Japan',
+                        time: '12世纪',
+                        label: '宋日贸易航线',
+                        color: '#6d4c41',
+                        points: [[121.4737,31.2304], [130.4017,33.5904]] // 宁波→博多
+                    },
+                    {
+                        from: 'United Kingdom',
+                        to: 'India',
+                        time: '1668年',
+                        label: '东印度公司航线',
+                        color: '#3e2723',
+                        points: [[-0.1276,51.5072], [72.8777,19.0760]] // 伦敦→孟买
+                    },
+                    {
+                        from: 'Netherlands',
+                        to: 'Indonesia',
+                        time: '1602年',
+                        label: '香料群岛航线',
+                        color: '#4e342e',
+                        points: [[4.8952,52.3702], [106.8272,-6.1754]] // 阿姆斯特丹→巴达维亚
+                    },
+                    {
+                        from: 'Portugal',  // 修正为葡萄牙主导的航线
+                        to: 'Nigeria',
+                        time: '16世纪', 
+                        label: '奴隶贸易航线',
+                        color: '#9e7e5d',
+                        points: [[-9.1427,38.7369], [3.3792,6.5244]] // 里斯本→拉各斯
+                    },
+                    {
+                        from: 'Germany',
+                        to: ['Sweden','Russia'], // 汉萨同盟多国贸易
+                        time: '1356-1450年',//《汉萨同盟编年史》记载1356年科隆会议确立正式同盟机制
+                        label: '汉萨同盟航线',
+                        color: '#3e2723',
+                        points: [[10.6866,53.8655], [18.0686,59.3293],[30.3351,59.9343]] // 吕贝克→斯德哥尔摩→诺夫哥罗德
+                    },
+                    {
+                        from: 'Kievan Rus',
+                        to: 'Russia',
+                        time: '13世纪',
+                        label: '第聂伯河商路',
+                        color: '#6d4c41',
+                        points: [[30.5238,50.4547], [30.3351,59.9343]] // 基辅→诺夫哥罗德
+                    },
+                    {
+                        from: 'Saudi Arabia',
+                        to: 'India',
+                        time: '13世纪',
+                        label: '阿拉伯海商路线',
+                        color: '#5d4037',   
+                        points: [[39.8579,21.5433], [72.8777,19.0760]]
+                    },
+                    {
+                        from: 'Turkey',
+                        to: 'Kievan Rus',
+                        time: '10世纪',
+                        label: '黑海贸易路线',
+                        color: '#6d4c41',
+                        points: [[28.9784,41.0082], [30.5238,50.4547]]
+                    },
+                    {
+                        from: 'Portugal',
+                        to: 'South Africa',
+                        time: '1488年',
+                        label: '迪亚士好望角航线',
+                        color: '#7d5d48',
+                        points: [[-9.1427,38.7369], [18.4241,-33.9249]] // 里斯本→开普敦
+                    },
+                    {
+                        from: 'United Kingdom',
+                        to: 'Australia',
+                        time: '1770年',
+                        label: '库克船长太平洋航线',
+                        color: '#3e2723',
+                        points: [[-0.1276,51.5072], [151.2093,-33.8688]] // 伦敦→悉尼
+                    },
+                    {
+                        from: 'Spain',
+                        to: 'Mexico',
+                        time: '1519年',
+                        label: '科尔特斯新大陆航线',
+                        color: '#6d4c41',
+                        points: [[-5.9845,37.3891], [-99.1332,19.4326]] // 塞维利亚→墨西哥城
+                    },
+                    {
+                        from: 'Oman',
+                        to: 'Kenya',
+                        time: '8-10世纪',
+                        label: '斯瓦希里海岸航线',
+                        color: '#5d4037',
+                        points: [[58.5453,23.5859], [39.2023,-4.0435]] // 马斯喀特→蒙巴萨
+                    },
+                ];
+
+                const regionData = {
+                            'China': {
+                                title: '技术发源地 - 中国',
+                                content: '战国时期（公元前4世纪）发明司南，北宋（1088年）沈括《梦溪笔谈》记载水浮磁针，南宋（12世纪）发展为密封旱罗盘（泉州南宋沉船出土实物显示1277年已有成熟密封罗盘），大幅提升航海稳定性。'
+                            },// 出处：泉州后渚港南宋沉船考古报告（1974）
+                            'Saudi Arabia': {
+                                title: '阿拉伯中转站',
+                                content: '10-13世纪通过海上贸易传入，阿拉伯航海家将指南针与星盘结合，显著提升导航精度。'
+                            },
+                            'Italy': {
+                                title: '地中海枢纽',
+                                content: '13世纪热那亚制图师完善波托兰海图（现存最早实物1290年），结合指南针实现精确导航。'
+                            },
+                            'Malaysia': {
+                                title: '南洋要冲',
+                                content: '1409年郑和在此建立航海基地。'
+                            },
+                            'Indonesia': {
+                                title: '东南亚枢纽',
+                                content: '13-15世纪通过中国商船传入，成为香料群岛航线的重要导航工具。'
+                            },  
+                            'India': {
+                                title: '印度次大陆',
+                                content: '1350年阿拉伯商人将32方位罗盘引入古吉拉特邦，用于季风期跨洋航行。'
+                            },
+                            'Japan': {
+                                title: '东亚传播',
+                                content: '1171年《百炼抄》记载南宋商船使用指南针抵达博多港，促进日本海上贸易发展。'
+                            },
+                            'Portugal': {
+                                title: '大航海先驱',
+                                content: '15世纪末改进阿拉伯指南针技术，结合象限仪实现精确纬度测量，开启地理大发现时代。'
+                            },
+                            'Spain': {
+                                title: '伊比利亚航海中心',
+                                content: '16世纪结合阿拉伯星盘与指南针技术，发展出卡拉克帆船导航系统，支持跨大西洋航行。'
+                            },
+                            'Netherlands': {
+                                title: '北海贸易枢纽',
+                                content: '17世纪改进葡萄牙导航技术，弗莱芒制图学派结合指南针与六分仪实现精确海图绘制。'
+                            },
+                            'United Kingdom': {
+                                title: '皇家海军技术',
+                                content: '18世纪东印度公司船只配备改良罗盘，配合哈里森H4航海钟实现全球定位能力。'
+                            },
+                            'Philippines': {
+                                title: '太平洋跳板',
+                                content: '1521年麦哲伦船队使用改良佛兰德罗盘横渡太平洋。'
+                            },
+                            'Brazil': {
+                                title: '新大陆应用',
+                                content: '葡萄牙殖民者将指南针技术应用于巴西红木运输航线，建立跨大西洋三角贸易体系。'
+                            },
+                            'Oman': {
+                                title: '阿拉伯航海传统',
+                                content: '9世纪阿曼水手使用"卡玛尔"导航板配合指南针，主导印度洋西岸的乳香贸易。'
+                            },
+                            'Sweden': {
+                                title: '北欧航海中心',
+                                content: '14世纪汉萨同盟商船将指南针技术传入瑞典，推动波罗的海铁矿贸易发展。'
+                            },
+                            'Mexico': {
+                                title: '新西班牙应用',
+                                content: '16世纪西班牙殖民者使用指南针规划阿卡普尔科-马尼拉大帆船航线，运输美洲白银至亚洲。'
+                            },
+                            'Turkey': {
+                                title: '奥斯曼帝国',
+                                content: '1299年奥斯曼崛起后控制丝绸之路西端，14世纪热那亚商人通过君士坦丁堡将指南针技术传入欧洲'
+                            },
+                            'Hansa': {
+                                title: '汉萨同盟',
+                                content: '14世纪北欧商业联盟通过吕贝克-斯德哥尔摩航线传播指南针技术，促进波罗的海贸易网络形成。'
+                            },
+                            'Kievan Rus': {
+                                title: '基辅罗斯',
+                                content: '1237年蒙古入侵前，通过黑海贸易获得拜占庭改良的"希腊式"水浮罗盘'
+                            },
+                            'Nigeria': {
+                                title: '西非奴隶贸易中心',
+                                content: '1481年葡萄牙建立埃尔米纳要塞，16世纪系统化跨洋运输中使用罗盘导航的卡拉维尔帆船'
+                            },
+                            'Iran': {
+                                title: '波斯中转站',
+                                content: '13世纪蒙古帝国建立驿站系统后，波斯成为连接中国与地中海的核心枢纽，马可·波罗记载商队使用磁罗盘导航'
+                            },
+                            'East Africa': {
+                                title: '斯瓦希里城邦',
+                                content: '1415年《郑和航海图》标注摩加迪沙（今索马里）使用「指两针」导航技术'
+                            },
+                            'Russia': {
+                                title: '诺夫哥罗德公国',
+                                content: '1323年《诺夫哥罗德编年史》记载汉萨商船使用32方位罗盘，1392年本地工匠开始仿制"日耳曼式"航海罗盘'
+                            },     
+                            'Germany': {
+                                title: '汉萨同盟核心',
+                                content: '14世纪吕贝克作为汉萨同盟总部，通过波罗的海航线传播导航技术'
+                            },
+                            'Ukraine': {
+                                title: '基辅罗斯遗址',
+                                content: '9-13世纪东斯拉夫文明中心，通过黑海贸易获得拜占庭技术'
+                            },
+                            'Australia': {
+                                title: '大洋洲技术传入',
+                                content: '1770年库克船长使用改进型航海罗盘绘制澳大利亚东海岸，1788年英国殖民船队携带精密罗盘建立悉尼殖民地。'
+                            },
+                            'South Africa': {
+                                title: '非洲南端中转站',
+                                content: '1488年迪亚士船队使用改良阿拉伯罗盘绕过好望角，1652年荷兰东印度公司在此建立永久航海补给站。'
+                            },
+                            'Canada': {
+                                title: '北美法属殖民地',
+                                content: '1534年法国探险家雅克·卡蒂埃使用佛兰德罗盘探索圣劳伦斯湾，1608年魁北克城建立后成为北美皮毛贸易导航中心。'
+                            },
+                            'Kenya': {
+                                title: '东非城邦',
+                                content: '10世纪阿曼商人将32方位罗盘传入蒙巴萨，郑和航海图（1417年）记载使用牵星板配合罗盘定位"慢八撒"（今蒙巴萨）。'
+                            },
+                            'Mexico': {
+                                title: '新西班牙总督区',
+                                content: '1524年西班牙殖民者建立跨太平洋的马尼拉大帆船航线，使用罗盘导航维持墨西哥-菲律宾-中国的三角贸易。'
+                            },
+                        };
+
+                const chinaNameMap = {
+                                    '中国': 'China',
+                                    '沙特阿拉伯': 'Saudi Arabia',
+                                    '热那亚': 'Italy',
+                                    '马六甲': 'Malaysia',
+                                    '日本': 'Japan',
+                                    '葡萄牙': 'Portugal',
+                                    '西班牙': 'Spain',
+                                    '荷兰': 'Netherlands',
+                                    '英国': 'United Kingdom',
+                                    '菲律宾': 'Philippines',
+                                    '巴西': 'Brazil',   
+                                    '阿曼': 'Oman',
+                                    '东非': ['Mozambique','Kenya','Tanzania'],  //《郑和航海图》中"僧祇"包含今索马里、肯尼亚沿岸
+                                    '印度': 'India',
+                                    '尼日利亚': 'Nigeria',
+                                    '汉萨同盟': ['Germany','Sweden','Russia'],
+                                    '基辅罗斯': 'Ukraine',
+                                    '波斯': 'Iran',
+                                    '君士坦丁堡': 'Turkey',
+                                    '诺夫哥罗德': 'Russia',  // 映射到现代俄罗斯
+                                    '澳大利亚': 'Australia',
+                                    '南非': 'South Africa',
+                                    '加拿大': 'Canada',
+                                    '肯尼亚': 'Kenya',
+                                    '墨西哥': 'Mexico',
+                                };
+
+                // 地图初始化
+                fetch('world.json')
+                    .then(res => res.json())
+                    .then(worldData => {
+                        const convertedData = {
+                            ...worldData,
+                            features: worldData.features.map(feature => ({
+                                ...feature,
+                                properties: {
+                                    ...feature.properties,
+                                    name: chinaNameMap[feature.properties.name] || feature.properties.name
+                                }
+                            }))
+                        };
+
+                        echarts.registerMap('PaperWorld', convertedData);
+
+                        const option = {
+                            title: {
+                                text: '指南针全球传播路线',
+
+                                left: 'center',
+                                textStyle: {
+                                    fontSize: 14,
+                                    color: '#382e22',
+                                    fontFamily: 'MedievalSharp'
+                                }
+                            },
+                            geo: {
+                                map: 'PaperWorld',
+                                roam: true,
+                                itemStyle: {
+                                    areaColor: '#f5edd6',
+                                    borderColor: 'rgba(56,46,34,0.7)',
+                                    borderWidth: 0.8
+                                },
+                                emphasis: {
+                                    itemStyle: {
+                                        areaColor: '#e0d4b8',
+                                        borderWidth: 1.2
+                                    },
+                                    label: {
+                                        show: true,
+                                        color: '#382e22',
+                                        formatter: ({ name }) => ({
+                                            'China': '华夏',
+                                            'Saudi Arabia': '大食',
+                                            'Genoa': '热那亚',
+                                            'Malaysia': '满剌加',
+                                            'Japan': '东瀛',
+                                            'Italy': '威尼斯',
+                                            'Portugal': '佛郎机',
+                                            'Spain': '日斯巴尼亚', // 此译名见于《坤舆万国全图》
+                                            'Netherlands': '红毛番',
+                                            'United Kingdom': '英吉利',
+                                            'Philippines': '吕宋',
+                                            'Brazil': '巴西',
+                                            'Oman': '阿曼',
+                                            'Somalia': '僧祇',
+                                            'India': '天竺',
+                                            'Nigeria': '西非',
+                                            'Turkey': '君士坦丁堡（1299-1453）',
+                                            'Kievan Rus': '基辅罗斯',
+                                            'Hansa': '汉萨同盟',
+                                            'Iran': '波斯（13世纪枢纽）',
+                                            'Russia': '诺夫哥罗德（1323）', 
+                                            'Ukraine': '基辅罗斯（1237前）',
+                                            'Australia': '南方大陆（1770）',
+                                            'South Africa': '好望角（1488）',
+                                            'Canada': '加拿大',
+                                            'Kenya': '慢八撒（郑和航海图）',
+                                            'Mexico': '新西班牙（1521）'
+                                        })[name] || name
+
+                                    }
+                                }
+                            },
+                            series: [{
+                                type: 'lines',
+                                coordinateSystem: 'geo',
+                                zLevel: 1,
+                                effect: {
+                                    show: true,
+                                    period: 5,
+                                    trailLength: 0.8,
+                                    symbol: 'arrow',
+                                    symbolSize: [12, 20],
+                                    loop: true
+                                },
+                                lineStyle: {
+                                    curveness: 0.3,
+                                    width: 1.8,
+                                    opacity: 0.6
+                                },
+                                data: spreadRoutes.map(route => ({
+                                    coords: route.points,
+                                    lineStyle: { color: route.color },
+                                    effect: { color: route.color }
+                                }))
+                            }]
+                        };
+
+                        chart.setOption(option);
+
+                        // 点击事件处理
+                        chart.on('click', 'geo', params => {
+                            const regionName = params.name;
+                            const info = regionData[regionName] || {
+                                title: `指南针技术传播 - ${regionName}`,
+                                content: '该地区指南针技术传入记录不详，可能通过次级贸易路线获得。'
+                            };
+                            
+                            document.getElementById('regionTitle').textContent = info.title;
+                            document.getElementById('regionContent').innerHTML = `
+                                <p>${info.content}</p>
+                                ${regionData[regionName] ? `
+                                <div style="margin-top:15px; color:#7f8c8d; border-top:1px solid #eee; padding-top:10px;">
+                                    <strong>关联传播路线：</strong>
+                                    <ul style="padding-left:20px; margin-top:8px;">
+                                        ${spreadRoutes
+                                            .filter(route => route.from === regionName || route.to === regionName)
+                                            .map(route => `
+                                                <li style="color:${route.color}; margin:8px 0;">
+                                                    <span style="background:${route.color}; width:8px; height:8px; display:inline-block; border-radius:50%; margin-right:8px;"></span>
+                                                    ${route.label}（${route.time}）
+                                                </li>
+                                            `).join('')}
+                                    </ul>
+                                </div>` : ''}
+                            `;
+                            infoPanel.style.display = 'block';
+                        });
+
+                        // 双击重置视角
+                        chart.on('dblclick', () => {
+                            chart.dispatchAction({ type: 'geoRoam', zoom: 1, center: [0, 0] });
+                        });
+                    });
+
+                window.closePanel = () => infoPanel.style.display = 'none';
+                window.addEventListener('resize', () => chart.resize());
+            </script>
+        </div>
+
+        <!-- 传播地区之间的关系网 -->
+        <div id="box3">
+            <script>
+                const myChart = echarts.init(document.getElementById('box3'));
+    
+                // 节点数据（补充巴格达节点完善传播链）
+                const nodes = [
+                    { id:0, name:'中国', category:'起源', symbolSize:35 },
+                    { id:1, name:'阿拉伯', category:'地区', symbolSize:30 },
+                    { id:2, name:'欧洲', category:'地区', symbolSize:25 },
+                    { id:3, name:'日本', category:'地区', symbolSize:25 },
+                    { id:4, name:'东南亚', category:'地区', symbolSize:25 }
+                ];
+    
+                // 连接关系（补充完整传播路径）
+                const links = [
+                    { source:0, target:1, label:'陆上丝绸之路' },
+                    { source:1, target:2, label:'阿拉伯-欧洲贸易' },
+                    { source:0, target:3, label:'宋日贸易航线' },
+                    { source:0, target:4, label:'郑和下西洋' }
+                ];
+    
+                // 分类颜色配置（中文标签）
+                const categories = [
+                    { name: '起源', itemStyle: { color: '#FF6B6B' } },
+                    { name: '地区', itemStyle: { color: '#4ECDC4' } },
+                    { name: '事件', itemStyle: { color: '#45B7D1' } },
+                    { name: '文物', itemStyle: { color: '#D4A5A5' } }
+                ];
+    
+                const tooltipDiv = document.createElement('div');
+                tooltipDiv.style = `
+                    position: absolute;
+                    padding: 10px;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                    display: none;
+                    z-index: 1000;
+                `;
+                document.body.appendChild(tooltipDiv);
+    
+                // 新增：点击事件处理
+                myChart.on('click', params => {
+                    if (params.dataType === 'node') {
+                        const currentNode = params.data;
+                        const upstreamNodes = links
+                            .filter(link => link.target === currentNode.id)
+                            .map(link => nodes.find(n => n.id === link.source).name);
+    
+                        if (upstreamNodes.length > 0) {
+                            // 显示自定义提示框
+                            tooltipDiv.innerHTML = `
+                                <strong>${currentNode.name}</strong>的上级节点：<br>
+                                ${upstreamNodes.join('<br>')}
+                            `;
+                            tooltipDiv.style.display = 'block';
+                            tooltipDiv.style.left = params.event.event.clientX + 10 + 'px';
+                            tooltipDiv.style.top = params.event.event.clientY + 10 + 'px';
+                        } else {
+                            tooltipDiv.innerHTML = `${currentNode.name}是起源节点，没有上级节点`;
+                            tooltipDiv.style.display = 'block';
+                            tooltipDiv.style.left = params.event.event.clientX + 10 + 'px';
+                            tooltipDiv.style.top = params.event.event.clientY + 10 + 'px';
+                        }
+                    } else {
+                        tooltipDiv.style.display = 'none';
+                    }
+                });
+    
+                // 新增：点击页面其他区域关闭提示
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#box3')) {
+                        tooltipDiv.style.display = 'none';  
+                    }
+                });
+    
+    
+                const option = {
+                    title: { 
+                        text: '指南针传播关系图谱（公元前2世纪-1910年）',
+                        left: 'center'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: categories.map(c => c.name),
+                        orient: 'vertical',
+                        right: 10,
+                        textStyle: { fontSize: 14 }
+                    },
+                    series: [{
+                        type: 'graph',
+                        layout: 'force',
+                        force: {
+                            repulsion: 100,
+                            gravity: 0.08,
+                            edgeLength: [100, 200] 
+                        },
+                        draggable: true,
+                        data: nodes.map(node => ({
+                            ...node,
+                            itemStyle: categories.find(c => c.name === node.category).itemStyle
+                        })),
+                        links: links,
+                        categories: categories,
+                        edgeLabel: {
+                            show: true,
+                            formatter: '{@label}',
+                            fontSize: 12
+                        },
+                        label: {
+                            show: true,
+                            position: 'right',
+                            fontSize: 12
+                        },
+                        lineStyle: {
+                            color: 'source',
+                            curveness: 0.2
+                        },
+                        emphasis: { // 新增高亮效果
+                            focus: 'adjacency',
+                            lineStyle: { width: 3 }
+                        }
+                    }]
+                };
+    
+                myChart.setOption(option);
+                window.onresize = () => myChart.resize();
+            </script>
+        </div>
+
+        <!-- 对各个地区的影响雷达图轮播 -->
+        <div id="box4">
+            <div class="carousel-container">
+                <div class="carousel-track" id="impactCarousel"></div>
+                <div class="carousel-controls">
+                    <span class="carousel-prev">◀</span>
+                    <div class="carousel-dots"></div>
+                    <span class="carousel-next">▶</span>
+                </div>
+            </div>
+            <script>
+                const box4Data = [
+                    {
+                        name: '中国',
+                        value: [10, 8, 9, 7, 8],
+                        years: '前4世纪-1910',
+                        facts: [
+                            '1044年《武经总要》记载指南鱼军事应用',
+                            '1277年泉州沉船发现完整旱罗盘',
+                            '1433年郑和舰队使用水罗盘'
+                        ],
+                        sources: ['泉州沉船考古报告','《梦溪笔谈》卷二十四']
+                    },
+                    {
+                        name: '阿拉伯',
+                        value: [0, 6, 9, 8, 5],
+                        years: '10-16世纪',
+                        facts: [
+                            '1021年海商手册《航道指南》记录磁针用法',
+                            '1282年巴格达建立星盘-罗盘学校',
+                            '1410年伊本·马吉德改良32方位罗盘'
+                        ],
+                        sources: ['大英图书馆阿拉伯手稿Or.5323']
+                    },
+                    {
+                        name: '欧洲',
+                        value: [0, 7, 10, 9, 6],
+                        years: '12-20世纪',
+                        facts: [
+                            '1190年热那亚商船日志首次记录磁偏角修正',
+                            '1489年葡萄牙王室颁布《航海罗盘标准》',
+                            '1905年英国海军部第287号令规范罗盘生产'
+                        ],
+                        sources: ['葡萄牙国家档案馆','格林威治海事博物馆']
+                    },
+                    {
+                        name: '日本',
+                        value: [0, 5, 7, 6, 7],
+                        years: '12-19世纪',
+                        facts: [
+                            '1171年《百炼抄》记载宋船导航技术',
+                            '1635年锁国令限制航海技术发展',
+                            '1875年引进英国标准液体罗盘'
+                        ],
+                        sources: ['京都东寺文书','明治海军档案']
+                    },
+                    {
+                        name: '东南亚',
+                        value: [0, 3, 6, 7, 4],
+                        years: '13-18世纪',
+                        facts: [
+                            '1293年爪哇商船使用32方位"指极盘"',
+                            '1409年马六甲郑和航海图碑记载导航技术',
+                            '1786年槟城港英式罗盘校准记录'
+                        ],
+                        sources: ['马六甲博物馆','东印度公司航海日志']
+                    }
+                ];
+
+                // 样式配置
+                const styleConfig = {
+                    radarColor: '#704214',
+                    areaColor: 'rgba(180,163,144,0.2)',
+                    tooltipBg: '#f5edd6',
+                    fontFamily: 'MedievalSharp'
+                };
+                
+                // 创建单个雷达图
+                function createImpactChart(data) {
+                    const chartDom = document.createElement('div');
+                    chartDom.className = 'carousel-item';
+                    chartDom.style.width = '100%';      // 新增
+                    chartDom.style.height = '100%';     // 新增
+                    const chart = echarts.init(chartDom);
+                    chart.setOption({
+                        title: {
+                            text: `${data.name}技术影响维度${data.years}`,
+                            left: 'center',
+                            textStyle: {
+                                fontSize: 14,
+                                color: '#382e22',
+                                fontFamily: styleConfig.fontFamily
+                            }
+                        },
+                        radar: {
+                            shape: 'circle',
+                            indicator: [
+                                { name: '技术发明', max: 10 },
+                                { name: '军事应用', max: 10 },
+                                { name: '航海发展', max: 10 },
+                                { name: '贸易促进', max: 10 },
+                                { name: '文化影响', max: 10 }
+                            ],
+                            axisLine: { lineStyle: { color: styleConfig.radarColor } },
+                            splitArea: { areaStyle: { color: ['rgba(168, 132, 24, 0.9)','rgba(224,212,184,0.3)'] } }
+                        },
+                        series: [{
+                            type: 'radar',
+                            data: [{ value: data.value, name: data.name }],
+                            lineStyle: { color: styleConfig.radarColor },
+                            areaStyle: { color: styleConfig.areaColor },
+                            tooltip: {
+                                formatter: params => `
+                                    <strong style="color:${styleConfig.radarColor}">${data.name}</strong>
+                                    <div style="border-top:1px solid #eee;margin:5px 0;padding-top:5px">
+                                        ${data.facts.join('<br>')}
+                                    </div>
+                                    <em style="font-size:0.8em;color:#7f8c8d">
+                                        数据来源：${data.sources.join('、')}
+                                    </em>
+                                `
+                            }
+                        }]
+                    });
+                    const observer = new ResizeObserver(() => chart.resize());
+                    observer.observe(chartDom);
+                    return chartDom;
+                }
+            
+                // 轮播控制
+                let currentSlide = 0;
+                const carouselTrack = document.getElementById('impactCarousel');
+                const dotsContainer = document.querySelector('.carousel-dots');
+
+                // 初始化
+                box4Data.forEach((data, index) => {
+                    carouselTrack.appendChild(createImpactChart(data));
+                    const dot = document.createElement('span');
+                    dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
+                    dot.dataset.index = index;
+                    dotsContainer.appendChild(dot);
+                });
+
+                // 切换逻辑
+                function updateCarousel(newIndex) {
+                    const itemWidth = document.querySelector('.carousel-item').offsetWidth;
+                    const totalItems = box4Data.length;
+                    
+                    // 处理循环逻辑
+                    if (newIndex < 0) newIndex = totalItems - 1;
+                    if (newIndex >= totalItems) newIndex = 0;
+                    
+                    // 更新当前索引
+                    currentSlide = newIndex;
+                    
+                    // 更新圆点状态
+                    document.querySelectorAll('.carousel-dot').forEach(dot => {
+                        dot.classList.toggle('active', parseInt(dot.dataset.index) === currentSlide);
+                    });
+                    
+                    carouselTrack.style.transform = `translateX(-${currentSlide * itemWidth}px)`;
+                }
+
+                // 事件绑定
+                document.querySelector('.carousel-prev').addEventListener('click', () => updateCarousel(currentSlide - 1));
+                document.querySelector('.carousel-next').addEventListener('click', () => updateCarousel(currentSlide + 1));
+                document.querySelectorAll('.carousel-dot').forEach(dot => {
+                    dot.addEventListener('click', () => updateCarousel(parseInt(dot.dataset.index)));
+                });
+
+                // 自动轮播
+                let autoPlay = setInterval(() => updateCarousel(currentSlide + 1), 5000);
+                carouselTrack.parentElement.addEventListener('mouseenter', () => clearInterval(autoPlay));
+                carouselTrack.parentElement.addEventListener('mouseleave', () => autoPlay = setInterval(() => updateCarousel(currentSlide + 1), 5000));
+            </script>
+            <style>
+                .carousel-container {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                }
+
+                .carousel-track {
+                    display: flex;
+                    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    height: 100%;
+                }
+
+                .carousel-item {
+                    min-width: 100%;
+                    height: 100%;
+                    padding: 15px;
+                }
+
+                .carousel-controls {
+                    position: absolute;
+                    bottom: 10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                }
+
+                .carousel-prev, .carousel-next {
+                    cursor: pointer;
+                    color: #704214;
+                    font-size: 20px;
+                    text-shadow: 0 2px 4px rgba(56,46,34,0.2);
+                }
+
+                .carousel-dots {
+                    display: flex;
+                    gap: 8px;
+                }
+
+                .carousel-dot {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background: #b4a390;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                }
+
+                .carousel-dot.active {
+                    background: #704214;
+                    transform: scale(1.2);
+                }
+
+                /* 适配地图容器样式 */
+                #box4 {
+                    border: 1px solid #e8e1d5;
+                    box-shadow: 0 2px 8px rgba(56,46,34,0.1);
+                }
+            </style>
+        </div>
+    </div>
+
+
+
+    <script>
+        let nav = document.querySelectorAll(".nav li")
+        function activeLink() {
+            nav.forEach((item) => item.classList.remove("active"))
+            this.classList.add("active");
+        } 
+        nav.forEach((item) => item.addEventListener("click", activeLink))
+    </script>
+</body>
+</html>
